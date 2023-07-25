@@ -3,11 +3,8 @@ import React from 'react'
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput'
 
 const AllExpenses = () => {
-  return (
-    <View>
-      <ExpensesOutput expensesPeriod="total"/>
-    </View>
-  )
+  return <ExpensesOutput expensesPeriod="total"/>
+
 }
 
 export default AllExpenses

@@ -1,12 +1,11 @@
 import { View, FlatList, Text} from 'react-native'
 import React from 'react'
+import SingleExpense from './SingleExpense'
 
 const ExpensesList = ({expenses = []}) => {
 
   const renderSingleExpense = ({item}) => {
-    return (
-      <Text>{item.description}</Text>
-    )
+    return <SingleExpense expense={item}/>
   }
 
   return (

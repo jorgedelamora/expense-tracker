@@ -3,11 +3,8 @@ import React from 'react'
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput'
 
 const RecentExpenses = () => {
-  return (
-    <View>
-      <ExpensesOutput expensesPeriod="last 7 days"/>
-    </View>
-  )
+  return <ExpensesOutput expensesPeriod="last 7 days"/>
+
 }
 
 export default RecentExpenses
