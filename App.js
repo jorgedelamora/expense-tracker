@@ -62,6 +62,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{
           headerStyle: {backgroundColor: GlobalStyles.colors.primary500},
           headerTintColor: 'white',
+          
         }}>
           <Stack.Screen name='expensesOverview' component={ExpensesOverview} options={{headerShown: false}}/>
           <Stack.Screen name='manageExpense' component={ManageExpense}/>

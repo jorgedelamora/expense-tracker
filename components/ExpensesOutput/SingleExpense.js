@@ -8,7 +8,9 @@ const SingleExpense = ({expense}) => {
     const navigation = useNavigation();
 
     const handleOnPress = () => {
-        navigation.navigate('manageExpense');
+        navigation.navigate('manageExpense', {
+            expenseId: expense.id
+        });
     }
     
     const dateAsString = getFormattedDate(expense.date)
