@@ -1,29 +1,34 @@
 import { View, StyleSheet } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import React, { useLayoutEffect } from 'react'
+import React, { useContext, useLayoutEffect } from 'react'
 import IconButton from '../components/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import Button from '../components/Button';
+import { ExpensesContext } from '../context/expenses';
 
 const ManageExpense = () => {
 
   const navigation = useNavigation();
   const route = useRoute();
+  const expensesCtx = useContext(ExpensesContext);
   const expenseId = route.params?.expenseId;
   const isEditingExistingExpense = !!expenseId;
 
   const deleteExpense = () => {
-    console.log('deleting');
+    expensesCtx.deleteExpense(expenseId);
     navigation.goBack();
   }
 
   const cancel = () => {
-    console.log('canceling');
     navigation.goBack();
   }
 
   const confirm = () => {
-    console.log('confirming');
+    if(isEditingExistingExpense){
+      expensesCtx.updateExpense(expenseId, {description: 'test editing', amount:19.99, date: new Date('2022-05-19')})
+    }else {
+      expensesCtx.addExpense({description: 'test adding', amount:19.99, date: new Date('2022-05-20')})
+    }
     navigation.goBack();
   }
 

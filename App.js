@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
@@ -9,6 +8,7 @@ import AllExpenses from './screens/AllExpenses';
 import { GlobalStyles } from './constants/styles';
 import {Ionicons} from '@expo/vector-icons'
 import IconButton from './components/IconButton';
+import ExpensesContextProvider from './context/expenses';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -56,8 +56,8 @@ const ExpensesOverview = () => {
 
 export default function App() {
   return (
-    <>
-      <StatusBar style="auto" />
+    <ExpensesContextProvider>
+      <StatusBar style="light" />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{
           headerStyle: {backgroundColor: GlobalStyles.colors.primary500},
@@ -68,6 +68,6 @@ export default function App() {
           <Stack.Screen name='manageExpense' component={ManageExpense}/>
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </ExpensesContextProvider>
   );
 }
