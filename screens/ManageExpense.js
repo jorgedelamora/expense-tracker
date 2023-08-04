@@ -1,13 +1,15 @@
+import React, { useContext, useLayoutEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import React, { useContext, useLayoutEffect } from 'react'
 import IconButton from '../components/IconButton';
 import { GlobalStyles } from '../constants/styles';
 import { ExpensesContext } from '../context/expenses';
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
+import { storeExpense, updateExpense, deleteExpenseFromDB } from '../util/http';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const ManageExpense = () => {
-
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const expensesCtx = useContext(ExpensesContext);
@@ -15,8 +17,10 @@ const ManageExpense = () => {
   const isEditingExistingExpense = !!expenseId;
   const selectedExpense = expensesCtx.expenses.find((exp) => exp.id === expenseId);
 
-  const deleteExpense = () => {
+  const deleteExpense = async () => {
+    setLoading(true);
     expensesCtx.deleteExpense(expenseId);
+    await deleteExpenseFromDB(expenseId);
     navigation.goBack();
   }
 
@@ -24,11 +28,14 @@ const ManageExpense = () => {
     navigation.goBack();
   }
 
-  const confirm = (expenseData) => {
+  const confirm = async (expenseData) => {
+    setLoading(true);
     if(isEditingExistingExpense){
-      expensesCtx.updateExpense(expenseId, expenseData)
+      expensesCtx.updateExpense(expenseId, expenseData);
+      await updateExpense(expenseId, expenseData);
     }else {
-      expensesCtx.addExpense(expenseData)
+      const expenseId = await storeExpense(expenseData);
+      expensesCtx.addExpense({...expenseData, id: expenseId});
     }
     navigation.goBack();
   }
@@ -38,6 +45,8 @@ const ManageExpense = () => {
       title: isEditingExistingExpense ? 'Edit Expense' : 'Add Expense'
     })
   },[navigation, isEditingExistingExpense]);
+
+  if(loading) return <LoadingOverlay />
 
   return (
     <View style={styles.container}>

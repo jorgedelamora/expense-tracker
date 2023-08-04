@@ -9,4 +9,4 @@ const AllExpenses = () => {
   return <ExpensesOutput expenses={expensesCtx.expenses} expensesPeriod="total"/>
 }
 
-export default AllExpenses
+export default AllExpenses 

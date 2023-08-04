@@ -1,9 +1,8 @@
 import { createContext, useReducer } from "react";
-import { DUMMY_EXPENSES } from "../data/dummyData";
-
 export const ExpensesContext = createContext({
     expenses: [],
     addExpense: ({description, amount, date}) => {},
+    setExpenses: (expenses) => {},
     deleteExpense: (id) => {},
     updateExpense: (id, {description,amount, date}) => {},
 });
@@ -11,8 +10,10 @@ export const ExpensesContext = createContext({
 const expensesReducer = (state, action) => {
     switch(action.type){
         case 'ADD':
-            const id = new Date().toString + Math.random().toString();
-            return [{...action.payload, id}, ...state];
+            return [{...action.payload}, ...state];
+        case 'SET':
+            const invertedOrder = action.payload.reverse();
+            return invertedOrder;
         case 'UPDATE':
             const expenseToUpdateIdx = state.findIndex((expense) => expense.id === action.payload.id);
             const expenseToUpdate = state[expenseToUpdateIdx];
@@ -30,10 +31,14 @@ const expensesReducer = (state, action) => {
 }
 
 const ExpensesContextProvider = ({children}) => {
-    const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES);
+    const [expensesState, dispatch] = useReducer(expensesReducer, []);
 
     const addExpense = (expenseData) => {
         dispatch({type: 'ADD', payload: expenseData});
+    }
+
+    const setExpenses = (expenses) => {
+        dispatch({type: 'SET', payload: expenses})
     }
 
     const deleteExpense = (id) => {
@@ -47,6 +52,7 @@ const ExpensesContextProvider = ({children}) => {
     const  value = {
         expenses: expensesState,
         addExpense,
+        setExpenses,
         updateExpense,
         deleteExpense
     }
