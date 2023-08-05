@@ -3,7 +3,7 @@ import React from 'react'
 import { GlobalStyles } from '../constants/styles';
 import Button from './Button';
 
-const LoadingOverlay = ({message, onPressBtn}) => {
+const ErrorOverlay = ({message, onPressBtn, btnLabel = 'Okay'}) => {
 
     const handleOnPress = () => {
         onPressBtn && onPressBtn();
@@ -13,12 +13,12 @@ const LoadingOverlay = ({message, onPressBtn}) => {
     <View style={styles.container}>
       <Text style={[styles.text, styles.title]}>An Error Ocurred!</Text>
       <Text style={styles.text}>{message}</Text>
-      <Button onPress={handleOnPress}>Okay</Button>
+      <Button onPress={handleOnPress}>{btnLabel}</Button>
     </View>
   )
 }
 
-export default LoadingOverlay;
+export default ErrorOverlay;
 
 const styles = StyleSheet.create({
     container: {

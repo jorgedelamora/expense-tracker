@@ -7,9 +7,11 @@ import { ExpensesContext } from '../context/expenses';
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
 import { storeExpense, updateExpense, deleteExpenseFromDB } from '../util/http';
 import LoadingOverlay from '../components/LoadingOverlay';
+import ErrorOverlay from '../components/ErrorOverlay';
 
 const ManageExpense = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
   const expensesCtx = useContext(ExpensesContext);
@@ -19,9 +21,14 @@ const ManageExpense = () => {
 
   const deleteExpense = async () => {
     setLoading(true);
-    expensesCtx.deleteExpense(expenseId);
-    await deleteExpenseFromDB(expenseId);
-    navigation.goBack();
+    try {
+      await deleteExpenseFromDB(expenseId);
+      expensesCtx.deleteExpense(expenseId);
+      navigation.goBack();
+    }catch(err){
+      setError(`Could not delete expense: ${err.message}`)
+      setLoading(false);
+    }
   }
 
   const cancel = () => {
@@ -30,14 +37,23 @@ const ManageExpense = () => {
 
   const confirm = async (expenseData) => {
     setLoading(true);
-    if(isEditingExistingExpense){
-      expensesCtx.updateExpense(expenseId, expenseData);
-      await updateExpense(expenseId, expenseData);
-    }else {
-      const expenseId = await storeExpense(expenseData);
-      expensesCtx.addExpense({...expenseData, id: expenseId});
+    try {        
+        if(isEditingExistingExpense){
+          await updateExpense(expenseId, expenseData);
+          expensesCtx.updateExpense(expenseId, expenseData);
+        }else {
+        const expenseId = await storeExpense(expenseData);
+        expensesCtx.addExpense({...expenseData, id: expenseId});
+        }
+        navigation.goBack();
+    } catch (error) {
+        setError(`Could not ${isEditingExistingExpense ? 'update ' : 'add '}expense: ${error.message}`)
+        setLoading(false);
     }
-    navigation.goBack();
+  }
+
+  const handleError = () => {
+    setError(false);
   }
 
   useLayoutEffect(() => {
@@ -45,6 +61,8 @@ const ManageExpense = () => {
       title: isEditingExistingExpense ? 'Edit Expense' : 'Add Expense'
     })
   },[navigation, isEditingExistingExpense]);
+
+  if(error && !loading) return <ErrorOverlay message={error} onPressBtn={handleError}/>
 
   if(loading) return <LoadingOverlay />
 
